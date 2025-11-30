@@ -1,0 +1,182 @@
+<app-header></app-header>
+
+
+<!-- Below is the USER FACING VIEW -->
+<div class="main px-6 py-4">
+  
+  <div class="head flex items-center gap-3 mb-4">
+    <p class="heading text-lg font-medium">Search for a fund here:</p>
+
+    <input
+      class="search w-72"
+      type="text"
+      pInputText
+      placeholder="Search by name (ex. LBI Fund 85)"
+      [(ngModel)]="value"
+    />
+
+    <p-button 
+      class="btn" 
+      label="Search" 
+      icon="pi pi-search"
+      severity="info"
+      iconPos="left"
+      (onClick)="onSearch()">
+    </p-button>
+  </div>
+
+  <p-divider />
+
+  <div *ngIf="isDataAvailable" class="itemTable mt-4">
+    <p-table 
+      #dt 
+      [value]="itemData"
+      [rows]="1"
+      [tableStyle]="{ 'min-width': '75rem' }">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Name</th>
+          <th>Strategies</th>
+          <th>Geographies</th>
+          <th>Currency</th>
+          <th>Fund Size</th>
+          <th>Vintage</th>
+          <th>Managers</th>
+          <th>Description</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-item>
+        <tr>
+          <td>{{ item.name }}</td>
+
+          <td>
+            <p-chip 
+              *ngFor="let s of item.strategies"
+              [label]="s"
+              class="mr-1">
+            </p-chip>
+          </td>
+
+          <td>
+            <p-chip 
+              *ngFor="let g of item.geographies"
+              [label]="g"
+              class="mr-1">
+            </p-chip>
+          </td>
+
+          <td>{{ item.currency }}</td>
+          <td>{{ item.fundSize }}</td>
+          <td>{{ item.vintage }}</td>
+
+          <td>
+            <ul class="m-0 p-0">
+              <li *ngFor="let m of item.managers">{{ m }}</li>
+            </ul>
+          </td>
+
+          <td>{{ item.description }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <div class="btn2 mt-3">
+      <p-button 
+        label="Edit Fund (Admins View Only)"
+        [raised]="true"
+        severity="secondary"
+        (onClick)="showDialog()">
+      </p-button>
+    </div>
+  </div>
+  
+</div>
+
+
+<!-- Below is the EDIT ADMIN VIEW -->
+<p-dialog 
+  header="Edit Fund (Admins Only)"
+  *ngIf="visible"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '32rem' }"
+  class="p-fluid">
+
+  <table class="w-full form-table">
+    <tbody>
+
+      <tr>
+        <td class="label">Name</td>
+        <td class="field">
+          <input pInputText [(ngModel)]="itemData[0].name" class="w-full" /> {{itemData.name}}
+        </td>
+      </tr>
+
+      <tr>
+        <td class="label">Strategies</td>
+        <td class="field">
+          <p-chips [(ngModel)]="itemData[0].strategies" class="w-full"></p-chips>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="label">Geographies</td>
+        <td class="field">
+          <p-chips [(ngModel)]="itemData[0].geographies" class="w-full"></p-chips>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="label">Currency</td>
+        <td class="field">
+          <input pInputText [(ngModel)]="itemData[0].currency" class="w-full" />
+        </td>
+      </tr>
+
+      <tr>
+        <td class="label">Fund Size</td>
+        <td class="field">
+          <input pInputText type="number" [(ngModel)]="itemData[0].fundSize" class="w-full" />
+        </td>
+      </tr>
+
+      <tr>
+        <td class="label">Vintage</td>
+        <td class="field">
+          <input pInputText type="number" [(ngModel)]="itemData[0].vintage" class="w-full" />
+        </td>
+      </tr>
+
+      <tr>
+        <td class="label">Managers</td>
+        <td class="field">
+          <p-chips [(ngModel)]="itemData[0].managers" class="w-full"></p-chips>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="label">Description</td>
+        <td class="field">
+          <textarea 
+            pInputTextarea
+            rows="3"
+            [(ngModel)]="itemData[0].description"
+            class="w-full">
+          </textarea>
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <div class="flex justify-end gap-2 mt-4 btn-group">
+    <p-button label="Delete" severity="danger" class="button"  (click)="deleteFund()"></p-button>
+    <p-button label="Cancel" severity="secondary" class="danger" (click)="visible = false"></p-button>
+    <p-button label="Save"  severity="contrast" (click)="saveFund()"></p-button>
+  </div>
+
+</p-dialog>
+
+<app-footer></app-footer>
